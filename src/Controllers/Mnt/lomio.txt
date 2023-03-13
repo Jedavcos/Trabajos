@@ -1,0 +1,228 @@
+//     class Categoria extends PublicController//Si es post se valida los datos del formulario 2 de Marzo
+//     {
+//         private $redirecTo = "index.php?page=Mnt-Categorias";
+//         private $viewData = array(
+//             "mode" => "DSP",
+//             "modedsc" => "",
+//             "carid" => 0,
+//             "catnom" => "",
+//             "catest" => "ACT",
+//             "catest_ACT" => "selected",
+//             "catest_INA" => "",
+//             "catnom_error" => "",
+//             "general_errors" => array(),
+//             "has_errors" => false,
+//             "show_action" => true,
+//             "readonly" => false
+//         );
+//         public function run() :void
+//         {
+//             try{
+//                 $this->page_loaded();
+//                 if($this->IsPostBack()){
+//                     $this->validatePostData();
+
+//                     if( ! $this -> viewData["has_errors"]){
+//                         $this -> executeAction();//si es delete haga delete, si es update que haga update etc...
+//                         //esta funcion es heredada
+//                     }
+//                 }
+//                 //$this -> render();
+//             } catch(\Exception $error){
+//                 error_log(sprintf("Controller/Mnt/Categoria ERROR: %s", $error ->getMessage()));//permite ingresar mensaje a los log operativo, podemos encontrar todos los errores
+//                 \Utilities\Site::redirectToWithMsg(
+//                     $this-> redirecTo, 
+//                     "Algo inesperado sucedió. Intente nuevamente"
+//                 );
+//             }   
+//             //a nivel de noseque
+//             /*
+            
+//              1) Captura de QueryParams -> parametro de Query  (diccionario de una variable, codificado en una url)
+//              Display, Insert, Update y delete. Se controla con el query params de un modo
+//              2) Determinar el método POST GET
+//              3) Procesar la entrada
+//               3.1 Si es un POST
+//               3.2 Capturar y validar datos del formulario
+//               3.3 Según el modo realizar la acción solicitada
+//               3.4 Notificar si hay 
+//               3.5 Redirigir a la lista
+//               4.1 Si es un get
+//               4.2 Obtener valores de la DB si no es INS
+//               4.3 Mostrar Valores
+//             4) Renderizar 
+//              */          
+//         }
+
+//         private $modes = array(
+//             "DSP" =>"Detalle de %s (%s)",
+//             "INS" => "Nueva Categoria",
+//             "UPD" => "Editar %s (%s)",
+//             "DEL" => "Borrar %s (%s)"
+//         );
+
+//         private function page_loaded(){
+
+//             if(isset($_GET['mode'])){
+//                 if(isset($this->modes[$_GET['mode']])){
+//                     $this->viewData["mode"] = $_GET['mode'];
+//                 } 
+//                 else {
+//                      throw new Exception ("Mode not defined on Query Params");
+//                 }
+//             } else{
+//                  throw new Exception ("Mode not defined on Query Params");
+//             }
+//             if($this->viewData["mode"] !== "INS"){
+//                 if(isset($_GET['catid'])){
+//                     $this->viewData["catid"] = intval($_GET['catid']);
+//                 }
+//                 else{
+//                      throw new Exception ("ID not found on Query Params");
+//                 }
+//             }
+//         }
+            
+//         private function validatePostData(){
+//             if(isset($_POST["catnom"])){//inputs los mismos que la bd
+//                 if(\Utilities\Validators::IsEmpty($_POST["catnom"])){
+//                     $this -> viewData["has_errors"] = true;
+//                     $this -> viewData["catnom_error"] = "El nombre NO puede ir vacio!";
+//                 }
+//             } else{
+//                 throw new Exception("CatNom not present in form");
+//             }
+
+//             if(isset($_POST["catest"])){//inputs los mismos que la bd
+//                 if(in_array($_POST["catest"], array("ACT", "INA"))){
+//                     throw new Exception("CatEst incorrect value");
+//                 }
+//             } else{
+//                 throw new Exception("Catest not present in form");
+//             }
+
+//             if(isset($_POST["mode"])){//inputs los mismos que la bd
+//                 if(!key_exists($_POST["mode"], $this->modes)){
+//                     throw new Exception("mode has a bad value");
+//                 }
+
+//                 if($this->viewData["mode"] !== $_POST["mode"]){
+//                     throw new Exception("mode has a bad value");
+//                 }
+//             } else{
+//                 throw new Exception("mode not present in form");
+//             }
+
+//             if(isset($_POST["catid"])){//inputs los mismos que la bd
+//                 if(!($this->viewData["catid"] !== "INS" && intval($_POST["catid"]) > 0)){
+//                     throw new Exception("catId is not Valid");              
+//                 }
+
+//                 if($this->viewData["catid"] !== $_POST["catid"]){
+//                     throw new Exception("catId value is different from Query");              
+//                 }
+
+//             } else{
+//                 throw new Exception("catid not present in form");
+//             }
+
+//             $this->viewData["catnom"] = $_POST["catnom"];
+//             $this->viewData["catest"] = $_POST["catest"];
+//         }
+
+//         private function executeAction(){
+//             switch($this -> viewData["mode"]){
+//                 case "INS":
+//                     $inserted = \Dao\Mnt\Categorias::insert(
+//                         $this ->viewData["catnom"],
+//                         $this -> viewData["catest"]
+//                     );
+//                     //si funciona...
+//                     if($inserted > 0){
+//                         \Utilities\Site::redirectToWithMsg(
+//                             $this -> redirecTo,
+//                             "Categoría Creada Exitosamente"
+//                         );
+//                     }
+//                     break;
+//                 case "UPD":
+//                     $updated = \Dao\Mnt\Categorias::update(
+//                         // $this -> redirectTo,
+//                         // "Categoria Actualizado Exitosamente"
+//                         $this -> viewData["catnom"],
+//                         $this -> viewData["catest"],
+//                         $this -> viewData["catid"]
+//                     );
+//                     if($updated > 0){
+//                         \Utilities\Site::redirectToWithMsg(
+//                             $this -> redirecTo,
+//                             "Categoría actualizada exitosamente"
+//                         );
+//                     }
+//                     break;
+//                 case "DEL":
+//                     $deleted = \Dao\Mnt\Categorias::delete(
+//                         $this -> viewData["catid"]
+//                     );
+//                     if($deleted > 0){
+//                         \Utilities\Site::redirectToWithMsg(
+//                             $this -> redirecTo,
+//                             "Categoría Eliminada exitosamente"
+//                         );
+//                     }
+//                     break;
+//             }
+//         }
+
+//         private function render(){
+//             if($this->viewData["mode"] === "INS") {
+//                 $this->viewData["modedsc"] = $this->modes["INS"];
+//             } else {
+//                 $tmpCategorias = \Dao\Mnt\Categorias::findById($this->viewData["catid"]);
+//                 if(!$tmpCategorias){
+//                     throw new Exception("Categoria no existe en DB");
+//                 }
+//                 //$this->viewData["catnom"] = $tmpCategorias["catnom"];
+//                 //$this->viewData["catest"] = $tmpCategorias["catest"];
+//                 \Utilities\ArrUtils::mergeFullArrayTo($tmpCategorias, $this->viewData);
+//                 $this->viewData["catest_ACT"] = $this->viewData["catest"] === "ACT" ? "selected": "";
+//                 $this->viewData["catest_INA"] = $this->viewData["catest"] === "INA" ? "selected": "";
+//                 $this->viewData["modedsc"] = sprintf(
+//                     $this->modes[$this->viewData["mode"]],
+//                     $this->viewData["catnom"],
+//                     $this->viewData["catid"]
+//                 );
+//                 if(in_array($this->viewData["mode"], array("DSP","DEL"))){
+//                     $this->viewData["readonly"] = "readonly";
+//                 }
+//                 if($this->viewData["mode"] === "DSP") {
+//                     $this->viewData["show_action"] = false;
+//                 }
+//             }
+//             Renderer::render("mnt/categoria", $this->viewData);
+//         }
+
+//     }
+
+    
+
+//     /*private function page_loaded()
+//     {
+//         if(isset($_GET['mode'])){
+//             if(isset($this->modes[$_GET['mode']])){
+//                 $this->viewData["mode"] = $_GET['mode'];
+//             } else {
+//                 throw "Mode Not available";
+//             }
+//         } else {
+//             throw "Mode not defined on Query Params";
+//         }
+//         if($this->viewData["mode"] !== "INS") {
+//             if(isset($_GET['catid'])){
+//                 $this->viewData["catid"] = $_GET["catid"];
+//             } else {
+//                 throw "Id not found on Query Params";
+//             }
+//         }
+//     }
+// */

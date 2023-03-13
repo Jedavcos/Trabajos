@@ -9,6 +9,8 @@ CREATE TABLE `clientes` (
   `clientbio` varchar(5000) DEFAULT NULL,
   `clientstatus` char(3) DEFAULT NULL,
   `clientdatecrt` datetime DEFAULT NULL,
-  `clientusercreates` bigint(10) DEFAULT NULL,
+  --`clientusercreates` bigint(10) DEFAULT NULL,
   PRIMARY KEY (`clientid`)
 ) ENGINE=InnoDB;
+
+--TAREA
