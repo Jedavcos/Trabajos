@@ -192,6 +192,14 @@
             } else {
                 throw new Exception("mode not present in form");
             }
+            if (isset($_POST["clientdatecrt"])) {
+                if (\Utilities\Validators::IsEmpty($_POST["clientdatecrt"])) {
+                    $this->viewData["has_errors"] = true;
+                    $this->viewData["clientdatecrt_error"] = "La fecha no puede ir vacío!";
+                }
+            } else {
+                throw new Exception("clientdatecrt not present in form");
+            }
             if (isset($_POST["clientid"])) {
                 if (($this->viewData["mode"] !== "INS" && intval($_POST["clientid"]) <= 0)) {
                     throw new Exception("clientid is not Valid");

@@ -4,6 +4,7 @@
 
     use Controllers\PublicController;
     use Exception;
+    use Twig\Error\Error;
     use Views\Renderer;
     //use Dao\Categorias;
 
@@ -22,6 +23,7 @@
             "has_errors" =>false,
             "show_action" => true,
             "readonly" => false,
+            "xssToken" =>""
         );
         private $modes = array(
             "DSP" => "Detalle de %s (%s)",
@@ -41,6 +43,7 @@
                 }
                 $this->render();
             } catch (Exception $error) {
+                unset($_SESSION["xssToken_Mnt_Categoria"]);
                 error_log(sprintf("Controller/Mnt/Categoria ERROR: %s", $error->getMessage()));
                 \Utilities\Site::redirectToWithMsg(
                     $this->redirectTo,
@@ -84,6 +87,19 @@
             }
         }
         private function validatePostData(){
+            if(isset($_POST["xssToken"])){
+                if(isset($_SESSION["xssToken_Mnt_Categoria"])){
+                    if($_POST["xssToken"] !== $_SESSION["xssToken_Mnt_Categoria"]){
+                        throw new Exception("Invalid Xss Token on session");
+                    }
+                }
+                else{
+                    throw new Exception("Invalid Xss Token on session");
+                }
+            }
+            else{
+                throw new Exception("Invalid Xss Token on session");
+            }
             if(isset($_POST["catnom"])){
                 if(\Utilities\Validators::IsEmpty($_POST["catnom"])){
                     $this->viewData["has_errors"] = true;
@@ -167,6 +183,9 @@
             }
         }
         private function render(){
+            $xssToken = md5("CATEGORIA" . rand(0, 4000) * rand(5000, 9999));
+            $this->viewData["xssToken"] = $xssToken;
+            $_SESSION["xssToken_Mnt_Categoria"] = $xssToken;
             if($this->viewData["mode"] === "INS") {
                 $this->viewData["modedsc"] = $this->modes["INS"];
             } else {
